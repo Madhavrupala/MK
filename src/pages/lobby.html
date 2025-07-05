@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MK Games - Lobby</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="lobby-container">
+        <h1>Welcome to MK Games Lobby</h1>
+        <p>Join or create a game to start playing!</p>
+        <div class="game-options">
+            <button onclick="joinGame('ludo')">Play Ludo</button>
+            <button onclick="joinGame('isto')">Play Isto</button>
+            <button onclick="joinGame('snake')">Play Snake Leader</button>
+            <button onclick="joinGame('tictactoe')">Play Tic Tac Toe</button>
+            <button onclick="joinGame('carrom')">Play Carrom</button>
+        </div>
+        <div id="game-status"></div>
+    </div>
+    <script src="../js/socket.js"></script>
+    <script src="../js/app.js"></script>
+</body>
+</html>

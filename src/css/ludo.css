@@ -1,0 +1,74 @@
+body {
+    background-color: #f0f0f0;
+    font-family: 'Arial', sans-serif;
+}
+
+.ludo-board {
+    width: 100%;
+    max-width: 600px;
+    margin: auto;
+    border: 2px solid #333;
+    border-radius: 10px;
+    background-color: #fff;
+    position: relative;
+}
+
+.ludo-cell {
+    width: 14.28%;
+    height: 14.28%;
+    float: left;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+.ludo-cell.active {
+    background-color: #ffeb3b;
+}
+
+.ludo-player {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    position: absolute;
+}
+
+.player1 {
+    background-color: #f44336;
+}
+
+.player2 {
+    background-color: #2196F3;
+}
+
+.player3 {
+    background-color: #4CAF50;
+}
+
+.player4 {
+    background-color: #FF9800;
+}
+
+.ludo-dice {
+    font-size: 48px;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.ludo-controls {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.ludo-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.ludo-button:hover {
+    background-color: #1976D2;
+}

@@ -1,0 +1,468 @@
+const express = require('express');
+const http = require('http');
+const socketIo = require('socket.io');
+const path = require('path');
+const gameRoutes = require('./routes/game');
+
+const app = express();
+const server = http.createServer(app);
+const io = socketIo(server, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"]
+    }
+});
+
+// Middleware
+app.use(express.json());
+app.use(express.static(path.join(__dirname, '../src')));
+
+// Use game routes
+app.use('/api/games', gameRoutes);
+
+// In-memory storage for simplified two-player system
+const players = {
+    madhav: { online: false, socketId: null, ready: false, selectedGame: null },
+    khushi: { online: false, socketId: null, ready: false, selectedGame: null }
+};
+const gameSession = {
+    active: false,
+    gameType: null,
+    startTime: null
+};
+
+// Socket connection handling
+io.on('connection', (socket) => {
+    console.log('A user connected:', socket.id);
+
+    // Player joins the platform
+    socket.on('player_join', (data) => {
+        const { player, name, avatar } = data;
+        
+        if (players[player]) {
+            players[player].online = true;
+            players[player].socketId = socket.id;
+            players[player].name = name;
+            players[player].avatar = avatar;
+            
+            console.log(`${name} (${player}) joined`);
+            
+            // Notify all clients about player status
+            io.emit('players_status', {
+                madhav: { online: players.madhav.online },
+                khushi: { online: players.khushi.online }
+            });
+        }
+    });
+
+    // Get players status (polling)
+    socket.on('get_players_status', () => {
+        io.emit('players_status', {
+            madhav: { online: players.madhav.online },
+            khushi: { online: players.khushi.online }
+        });
+    });
+
+    // Game selection
+    socket.on('game_selected', (data) => {
+        const { player, gameType } = data;
+        
+        if (players[player]) {
+            players[player].selectedGame = gameType;
+            players[player].ready = false; // Reset ready status on new game selection
+            
+            console.log(`${player} selected game: ${gameType}`);
+            
+            // Broadcast to all clients
+            io.emit('game_selected', {
+                player: player,
+                gameType: gameType
+            });
+        }
+    });
+
+    // Player ready status
+    socket.on('player_ready', (data) => {
+        const { player, gameType, ready } = data;
+        
+        if (players[player]) {
+            players[player].ready = ready;
+            players[player].selectedGame = gameType;
+            
+            console.log(`${player} is ${ready ? 'ready' : 'not ready'} for ${gameType}`);
+            
+            // Notify all clients about ready status
+            io.emit('player_ready_status', {
+                player: player,
+                ready: ready,
+                gameType: gameType
+            });
+            
+            // Check if both players are ready for the same game
+            if (players.madhav.ready && players.khushi.ready && 
+                players.madhav.selectedGame === players.khushi.selectedGame) {
+                
+                // Start game countdown
+                gameSession.active = true;
+                gameSession.gameType = gameType;
+                gameSession.startTime = new Date();
+                
+                io.emit('game_ready', {
+                    gameType: gameType,
+                    players: ['madhav', 'khushi']
+                });
+                
+                console.log(`Game starting: ${gameType}`);
+            }
+        }
+    });
+
+    // Chat messages
+    socket.on('chat_message', (data) => {
+        const { sender, senderName, text, timestamp } = data;
+        
+        console.log(`Chat from ${senderName}: ${text}`);
+        
+        // Broadcast to all connected clients except sender
+        socket.broadcast.emit('chat_message', {
+            sender,
+            senderName,
+            text,
+            timestamp
+        });
+    });
+    
+    // Live reactions
+    socket.on('live_reaction', (data) => {
+        const { player, name, emoji, timestamp } = data;
+        
+        console.log(`Live reaction from ${name}: ${emoji}`);
+        
+        // Broadcast to all except sender
+        socket.broadcast.emit('live_reaction', {
+            player,
+            name,
+            emoji,
+            timestamp
+        });
+    });
+
+    // Handle disconnection
+    socket.on('disconnect', () => {
+        // Find which player disconnected and mark as offline
+        for (const [playerName, playerData] of Object.entries(players)) {
+            if (playerData.socketId === socket.id) {
+                players[playerName].online = false;
+                players[playerName].socketId = null;
+                players[playerName].ready = false;
+                
+                console.log(`${playerName} disconnected`);
+                
+                // Notify all clients about player status
+                io.emit('players_status', {
+                    madhav: { online: players.madhav.online },
+                    khushi: { online: players.khushi.online }
+                });
+                
+                // Reset game session if active
+                if (gameSession.active) {
+                    gameSession.active = false;
+                    gameSession.gameType = null;
+                    gameSession.startTime = null;
+                    
+                    io.emit('game_ended', { reason: 'player_disconnected' });
+                }
+                break;
+            }
+        }
+        
+        console.log('User disconnected:', socket.id);
+    });
+});
+// Helper functions
+function getPlayerName(socketId) {
+    for (const [playerName, playerData] of Object.entries(players)) {
+        if (playerData.socketId === socketId) {
+            return playerName;
+        }
+    }
+    return null;
+}
+
+// API endpoint to get current game status
+app.get('/api/game-status', (req, res) => {
+    res.json({
+        players: {
+            madhav: { 
+                online: players.madhav.online, 
+                ready: players.madhav.ready,
+                selectedGame: players.madhav.selectedGame 
+            },
+            khushi: { 
+                online: players.khushi.online, 
+                ready: players.khushi.ready,
+                selectedGame: players.khushi.selectedGame 
+            }
+        },
+        gameSession: gameSession
+    });
+});
+
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+    console.log(`🎮 MK Games Server running on port ${PORT}`);
+    console.log(`🌐 Open http://localhost:${PORT} to play!`);
+});
+        }
+    });
+
+    // Leave current room
+    socket.on('leave_room', (data) => {
+        const { roomCode, player } = data;
+        const room = rooms.get(roomCode);
+        
+        if (room) {
+            room.players = room.players.filter(p => p.username !== player.username);
+            
+            if (room.players.length === 0) {
+                // Delete empty room
+                rooms.delete(roomCode);
+            } else {
+                // If host left, assign new host
+                if (room.host === player.username && room.players.length > 0) {
+                    room.host = room.players[0].username;
+                }
+                
+                // Notify remaining players
+                io.to(roomCode).emit('player_left', { 
+                    players: room.players,
+                    leavingPlayer: player,
+                    newHost: room.host
+                });
+            }
+        }
+        
+        socket.leave(roomCode);
+        
+        // Update user's current room
+        const user = users.get(socket.id);
+        if (user) {
+            user.currentRoom = null;
+        }
+        
+        console.log(`${player.username} left room ${roomCode}`);
+    });
+
+    // Start game
+    socket.on('start_game', (data) => {
+        const { roomCode } = data;
+        const room = rooms.get(roomCode);
+        
+        if (room && room.status === 'waiting') {
+            room.status = 'playing';
+            room.startedAt = new Date();
+            
+            // Notify all players to start the game
+            io.to(roomCode).emit('game_started', { 
+                gameType: room.gameType,
+                players: room.players 
+            });
+            
+            console.log(`Game started in room ${roomCode}`);
+        }
+    });
+
+    // Send friend request
+    socket.on('send_friend_request', (data) => {
+        const { from, to } = data;
+        
+        // Find recipient by username or device ID
+        const recipient = findUserByIdentifier(to);
+        
+        if (recipient) {
+            const requestId = `${from.username}-${to}`;
+            friendRequests.set(requestId, {
+                from: from,
+                to: recipient,
+                timestamp: new Date()
+            });
+            
+            // Notify recipient if online
+            if (recipient.online) {
+                io.to(recipient.socketId).emit('friend_request', {
+                    from: from,
+                    requestId: requestId
+                });
+            }
+            
+            socket.emit('friend_request_sent', { to: recipient.username });
+        } else {
+            socket.emit('error', { message: 'User not found' });
+        }
+    });
+
+    // Accept friend request
+    socket.on('accept_friend_request', (data) => {
+        const { requestId } = data;
+        const request = friendRequests.get(requestId);
+        
+        if (request) {
+            // Add to friends lists
+            addFriend(request.from.username, request.to.username);
+            
+            // Notify both users
+            const requester = findUserByIdentifier(request.from.username);
+            if (requester && requester.online) {
+                io.to(requester.socketId).emit('friend_request_accepted', {
+                    friend: request.to
+                });
+            }
+            
+            socket.emit('friend_added', { friend: request.from });
+            
+            // Remove the request
+            friendRequests.delete(requestId);
+        }
+    });
+
+    // Invite friend to game
+    socket.on('invite_friend', (data) => {
+        const { from, to, roomCode, gameType } = data;
+        
+        const friend = findUserByIdentifier(to);
+        if (friend && friend.online) {
+            io.to(friend.socketId).emit('game_invite', {
+                from: from,
+                roomCode: roomCode,
+                gameType: gameType
+            });
+        }
+    });
+
+    // Game moves and actions
+    socket.on('game_move', (data) => {
+        const user = users.get(socket.id);
+        if (user && user.currentRoom) {
+            // Broadcast move to other players in the room
+            socket.to(user.currentRoom).emit('game_move', {
+                ...data,
+                player: user.username
+            });
+        }
+    });
+
+    // Chat messages
+    socket.on('chat_message', (data) => {
+        const user = users.get(socket.id);
+        if (user && user.currentRoom) {
+            const messageData = {
+                ...data,
+                sender: user.username,
+                timestamp: new Date()
+            };
+            
+            // Broadcast to all players in the room
+            io.to(user.currentRoom).emit('chat_message', messageData);
+        }
+    });
+
+    // Handle disconnection
+    socket.on('disconnect', () => {
+        const user = users.get(socket.id);
+        
+        if (user) {
+            console.log(`User ${user.username} disconnected`);
+            
+            // Update user status
+            user.online = false;
+            
+            // Handle room cleanup if user was in a room
+            if (user.currentRoom) {
+                const room = rooms.get(user.currentRoom);
+                if (room) {
+                    room.players = room.players.filter(p => p.username !== user.username);
+                    
+                    if (room.players.length === 0) {
+                        rooms.delete(user.currentRoom);
+                    } else {
+                        // If host disconnected, assign new host
+                        if (room.host === user.username) {
+                            room.host = room.players[0].username;
+                        }
+                        
+                        // Notify remaining players
+                        io.to(user.currentRoom).emit('player_left', { 
+                            players: room.players,
+                            leavingPlayer: user,
+                            newHost: room.host
+                        });
+                    }
+                }
+            }
+            
+            // Remove user after a delay (in case they reconnect)
+            setTimeout(() => {
+                users.delete(socket.id);
+            }, 30000); // 30 seconds
+        }
+    });
+});
+
+// Helper functions
+function generateRoomCode() {
+    return Math.random().toString(36).substr(2, 6).toUpperCase();
+}
+
+function getMaxPlayers(gameType) {
+    const maxPlayers = {
+        'ludo': 4,
+        'isto': 4,
+        'carrom': 4,
+        'tictactoe': 2,
+        'snake': 6,
+        'dotjoin': 4
+    };
+    return maxPlayers[gameType] || 4;
+}
+
+function findUserByIdentifier(identifier) {
+    for (const [socketId, user] of users.entries()) {
+        if (user.username === identifier || user.deviceId === identifier) {
+            return user;
+        }
+    }
+    return null;
+}
+
+function addFriend(username1, username2) {
+    if (!friends.has(username1)) {
+        friends.set(username1, new Set());
+    }
+    if (!friends.has(username2)) {
+        friends.set(username2, new Set());
+    }
+    
+    friends.get(username1).add(username2);
+    friends.get(username2).add(username1);
+}
+
+// API endpoint to get server stats
+app.get('/api/stats', (req, res) => {
+    res.json({
+        connectedUsers: users.size,
+        activeRooms: rooms.size,
+        pendingRequests: friendRequests.size
+    });
+});
+
+// Serve the main page
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '../src/index.html'));
+});
+
+// Start the server
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+    console.log(`🎮 MK Games Server running on port ${PORT}`);
+    console.log(`📱 Mobile-optimized multiplayer gaming platform ready!`);
+});
