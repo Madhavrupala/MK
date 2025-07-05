@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MK Games - Dot Connect</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/dotjoin.css">
+</head>
+<body>
+    <div id="dotConnectGame" class="game-container">
+        <!-- Game Header -->
+        <header class="game-header">
+            <div class="header-content">
+                <button id="backBtn" class="back-btn">← Back</button>
+                <h1 class="game-title">🔗 Dot Connect</h1>
+                <div class="game-info">
+                    <span id="currentTurn" class="turn-indicator">Your Turn</span>
+                    <span id="timer" class="game-timer">05:00</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Players Info -->
+        <div class="players-info">
+            <div class="player-card active" id="player1">
+                <div class="player-avatar">P1</div>
+                <div class="player-details">
+                    <span class="player-name">Player 1</span>
+                    <span class="player-score">0 squares</span>
+                </div>
+                <div class="player-color" style="background: #3b82f6;"></div>
+            </div>
+            <div class="player-card" id="player2">
+                <div class="player-avatar">P2</div>
+                <div class="player-details">
+                    <span class="player-name">Player 2</span>
+                    <span class="player-score">0 squares</span>
+                </div>
+                <div class="player-color" style="background: #ef4444;"></div>
+            </div>
+        </div>
+
+        <!-- Game Board -->
+        <div class="game-board-container">
+            <div class="board-wrapper">
+                <svg id="gameBoard" class="dot-board" viewBox="0 0 400 400">
+                    <!-- Dots and lines will be generated here -->
+                </svg>
+            </div>
+        </div>
+
+        <!-- Game Controls -->
+        <div class="game-controls">
+            <button id="pauseBtn" class="control-btn">
+                <span class="btn-icon">⏸️</span>
+                <span class="btn-text">Pause</span>
+            </button>
+            <button id="chatBtn" class="control-btn">
+                <span class="btn-icon">💬</span>
+                <span class="btn-text">Chat</span>
+            </button>
+            <button id="hintBtn" class="control-btn">
+                <span class="btn-icon">💡</span>
+                <span class="btn-text">Hint</span>
+            </button>
+            <button id="surrenderBtn" class="control-btn danger">
+                <span class="btn-icon">🏳️</span>
+                <span class="btn-text">Surrender</span>
+            </button>
+        </div>
+
+        <!-- Game Rules Modal -->
+        <div id="rulesModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>🔗 How to Play Dot Connect</h3>
+                    <button id="closeRulesBtn" class="close-btn">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="rules-content">
+                        <div class="rule-item">
+                            <div class="rule-icon">🎯</div>
+                            <div class="rule-text">
+                                <h4>Objective</h4>
+                                <p>Connect dots with lines to form squares and claim them!</p>
+                            </div>
+                        </div>
+                        <div class="rule-item">
+                            <div class="rule-icon">✏️</div>
+                            <div class="rule-text">
+                                <h4>How to Play</h4>
+                                <p>Click between two adjacent dots to draw a line. Complete a square to claim it.</p>
+                            </div>
+                        </div>
+                        <div class="rule-item">
+                            <div class="rule-icon">🏆</div>
+                            <div class="rule-text">
+                                <h4>Winning</h4>
+                                <p>The player with the most squares when all lines are drawn wins!</p>
+                            </div>
+                        </div>
+                        <div class="rule-item">
+                            <div class="rule-icon">⚡</div>
+                            <div class="rule-text">
+                                <h4>Bonus Turn</h4>
+                                <p>Complete a square to get another turn immediately!</p>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="startGameBtn" class="start-btn">Let's Play!</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Panel -->
+        <div id="chatPanel" class="chat-panel">
+            <div class="chat-header">
+                <h4>💬 Game Chat</h4>
+                <button id="closeChatBtn" class="close-btn">×</button>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <!-- Chat messages will appear here -->
+            </div>
+            <div class="chat-input">
+                <input type="text" id="chatInput" placeholder="Type a message..." maxlength="100">
+                <button id="sendChatBtn" class="send-btn">Send</button>
+            </div>
+        </div>
+
+        <!-- Game Result Modal -->
+        <div id="gameResultModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="resultTitle">🎉 Game Over</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="result-content">
+                        <div class="winner-section">
+                            <div id="winnerAvatar" class="winner-avatar">🏆</div>
+                            <h2 id="winnerName">Player 1 Wins!</h2>
+                            <p id="finalScore">Final Score: 8 - 4</p>
+                        </div>
+                        <div class="game-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Game Duration:</span>
+                                <span id="gameDuration" class="stat-value">05:23</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Total Moves:</span>
+                                <span id="totalMoves" class="stat-value">45</span>
+                            </div>
+                        </div>
+                        <div class="result-actions">
+                            <button id="playAgainBtn" class="action-btn primary">🔄 Play Again</button>
+                            <button id="backToLobbyBtn" class="action-btn secondary">🏠 Back to Lobby</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Screen -->
+        <div id="loadingScreen" class="loading-screen">
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <h3>Connecting to Game...</h3>
+                <p id="loadingText">Please wait while we set up your game</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/socket.js"></script>
+    <script src="../js/games/dotjoin.js"></script>
+</body>
+</html>
