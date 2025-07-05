@@ -1,0 +1,1 @@
+This file is not used in the current app structure. All socket logic is now in app.js. You can safely delete socket.js if you do not plan to use it for separate socket logic.

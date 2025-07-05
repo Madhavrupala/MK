@@ -1,0 +1,48 @@
+{
+  "name": "mk-games",
+  "version": "1.0.0",
+  "description": "A mobile-optimized multiplayer online gaming platform with friend requests and real-time gameplay.",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "nodemon server/server.js",
+    "test": "echo \"No tests specified\" && exit 0",
+    "deploy": "git add . && git commit -m \"Deploy updates\" && git push",
+    "setup": "npm install && echo \"Setup complete! Run 'npm start' to begin.\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YOUR_USERNAME/mk-games.git"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.7.2",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": [
+    "games",
+    "multiplayer",
+    "online",
+    "mobile",
+    "realtime",
+    "socket.io",
+    "ludo",
+    "carrom",
+    "tic-tac-toe",
+    "snakes-and-ladders",
+    "dot-connect",
+    "isto"
+  ],
+  "author": "MK Games Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mkgames/mk-games-1.git"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

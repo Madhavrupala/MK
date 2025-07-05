@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket.IO Test</title>
+</head>
+<body>    <h1>Socket.IO Test</h1>
+    <div id="status">Connecting...</div>
+    <button onclick="testPing()">Test Ping</button>
+    <button onclick="testGameStart()">Test Game Start</button>
+    
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        console.log('Test script loading...');
+        console.log('io available:', typeof io !== 'undefined');
+        
+        let socket;
+        
+        if (typeof io !== 'undefined') {
+            console.log('Creating socket...');
+            socket = io();
+            
+            socket.on('connect', () => {
+                console.log('Connected to server!');
+                document.getElementById('status').textContent = 'Connected!';
+                
+                // Test ping
+                console.log('Sending test ping...');
+                socket.emit('test_ping', { message: 'Hello from test page!' });
+            });
+              socket.on('game_start', (data) => {
+                console.log('🎮 GAME_START received:', data);
+                alert('Game Start Event Received! Game: ' + data.gameType);
+            });
+            
+            socket.on('game_ready', (data) => {
+                console.log('🎯 GAME_READY received:', data);
+                document.getElementById('status').textContent = 'Game Ready! Starting in 3 seconds...';
+            });
+            
+            socket.on('disconnect', () => {
+                console.log('Disconnected');
+                document.getElementById('status').textContent = 'Disconnected';
+            });
+        } else {
+            console.error('Socket.IO not available');
+            document.getElementById('status').textContent = 'Socket.IO not available';
+        }
+          function testPing() {
+            if (socket && socket.connected) {
+                console.log('Manual ping test...');
+                socket.emit('test_ping', { message: 'Manual test from button!' });
+            } else {
+                console.log('Socket not connected');
+            }
+        }
+
+        function testGameStart() {
+            if (socket && socket.connected) {
+                console.log('Testing game start...');
+                socket.emit('manual_test_ready', {});
+            } else {
+                console.log('Socket not connected');
+            }
+        }
+    </script>
+</body>
+</html>

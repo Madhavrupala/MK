@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MK Games - Multiplayer Online Gaming</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/ludo.css">
+    <link rel="stylesheet" href="css/isto.css">
+    <link rel="stylesheet" href="css/snake.css">
+    <link rel="stylesheet" href="css/tictactoe.css">
+    <link rel="stylesheet" href="css/carrom.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- Player Selection Screen -->
+        <div id="loginScreen" class="screen active">
+            <div class="login-container">
+                <div class="logo-section">
+                    <h1 class="main-logo">🎮 MK Games</h1>
+                    <p class="tagline">Private Gaming for Madhav & Khushi</p>
+                </div>
+                <form id="loginForm" class="login-form">
+                    <div class="input-group">
+                        <label for="playerSelect">Choose Your Player:</label>
+                        <select id="playerSelect" required>
+                            <option value="">Select Player</option>
+                            <option value="madhav">👨‍💻 Madhav</option>
+                            <option value="khushi">👩‍💻 Khushi</option>
+                        </select>
+                    </div>
+                    <div class="player-status" id="playerStatus">
+                        <div class="status-item">
+                            <span class="player-name">👨‍💻 Madhav:</span>
+                            <span class="status offline" id="madhavStatus">Offline</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="player-name">👩‍💻 Khushi:</span>
+                            <span class="status offline" id="khushiStatus">Offline</span>
+                        </div>
+                    </div>
+                    <button type="submit" class="login-btn">🚀 Join Game</button>
+                </form>
+                <p class="login-note">When both players are online, you can start playing!</p>
+            </div>
+        </div>
+
+        <!-- Main App Screen -->
+        <div id="mainScreen" class="screen">
+            <!-- Header -->
+            <header class="main-header">
+                <div class="header-content">
+                    <div class="user-info">
+                        <div class="avatar" id="userAvatar">👤</div>
+                        <span id="currentUsername">Player</span>
+                    </div>
+                    <h1 class="app-title">MK Games</h1>
+                    <div class="header-actions">
+                        <button id="chatToggleBtn" class="header-btn">
+                            💬 <span class="btn-text">Chat</span>
+                            <span id="newMessageCount" class="notification-badge">0</span>
+                        </button>
+                        <div class="online-indicator" id="onlineIndicator">
+                            <span class="status-dot"></span>
+                            <span class="status-text">Connecting...</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Game Selection -->
+            <main class="main-content">
+                <section class="welcome-section">
+                    <h2>Choose Your Adventure</h2>
+                    <p>Select a game to play together! 🎮✨</p>
+                </section>
+
+                <!-- Players Status Section -->
+                <section class="players-status-section">
+                    <div class="status-container">
+                        <div class="player-status-item">
+                            <span class="player-avatar">👨‍💻</span>
+                            <span class="player-name">Madhav</span>
+                            <span class="status offline" id="madhavStatusMain">Offline</span>
+                        </div>
+                        <div class="vs-separator">VS</div>
+                        <div class="player-status-item">
+                            <span class="player-avatar">👩‍💻</span>
+                            <span class="player-name">Khushi</span>
+                            <span class="status offline" id="khushiStatusMain">Offline</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="games-grid">
+                    <div class="game-card" data-game="ludo">
+                        <div class="game-icon">🎲</div>
+                        <h3>Ludo Classic</h3>
+                        <p>Race your tokens home in this classic board game</p>
+                        <div class="game-meta">
+                            <span class="players">👥 2-4 Players</span>
+                            <span class="duration">⏱️ 15-30 min</span>
+                        </div>
+                        <button class="play-btn">Play Now</button>
+                    </div>
+
+                    <div class="game-card" data-game="isto">
+                        <div class="game-icon">🏠</div>
+                        <h3>Isto</h3>
+                        <p>Strategic house-building game with friends</p>
+                        <div class="game-meta">
+                            <span class="players">👥 2-4 Players</span>
+                            <span class="duration">⏱️ 20-40 min</span>
+                        </div>
+                        <button class="play-btn">Play Now</button>
+                    </div>
+
+                    <div class="game-card" data-game="carrom">
+                        <div class="game-icon">⚫</div>
+                        <h3>Carrom Board</h3>
+                        <p>Flick and pocket coins in this skill-based game</p>
+                        <div class="game-meta">
+                            <span class="players">👥 2-4 Players</span>
+                            <span class="duration">⏱️ 10-20 min</span>
+                        </div>
+                        <button class="play-btn">Play Now</button>
+                    </div>
+
+                    <div class="game-card" data-game="tictactoe">
+                        <div class="game-icon">❌</div>
+                        <h3>Tic Tac Toe</h3>
+                        <p>Quick strategy game - get three in a row!</p>
+                        <div class="game-meta">
+                            <span class="players">👥 2 Players</span>
+                            <span class="duration">⏱️ 2-5 min</span>
+                        </div>
+                        <button class="play-btn">Play Now</button>
+                    </div>
+
+                    <div class="game-card" data-game="snake">
+                        <div class="game-icon">🐍</div>
+                        <h3>Snakes & Ladders</h3>
+                        <p>Climb ladders, avoid snakes in this luck-based race</p>
+                        <div class="game-meta">
+                            <span class="players">👥 2-6 Players</span>
+                            <span class="duration">⏱️ 10-25 min</span>
+                        </div>
+                        <button class="play-btn">Play Now</button>
+                    </div>
+
+                    <div class="game-card" data-game="dotjoin">
+                        <div class="game-icon">🔗</div>
+                        <h3>Dot Connect</h3>
+                        <p>Connect dots to form squares and claim territory</p>
+                        <div class="game-meta">
+                            <span class="players">👥 2-4 Players</span>
+                            <span class="duration">⏱️ 5-15 min</span>
+                        </div>
+                        <button class="play-btn">Play Now</button>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- Simplified Game Lobby -->
+        <div id="lobbyScreen" class="screen">
+            <div class="lobby-header">
+                <button id="backToMain" class="back-btn">← Back to Games</button>
+                <h2 id="lobbyTitle">Game Lobby</h2>
+                <div class="player-ready-status">
+                    <div class="ready-player" id="madhavReady">
+                        <span class="player-avatar">👨‍💻</span>
+                        <span class="player-name">Madhav</span>
+                        <span class="ready-status">Waiting...</span>
+                    </div>
+                    <div class="ready-player" id="khushiReady">
+                        <span class="player-avatar">👩‍💻</span>
+                        <span class="player-name">Khushi</span>
+                        <span class="ready-status">Waiting...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lobby-content">
+                <div class="game-ready-section">
+                    <div class="ready-card">
+                        <div class="ready-icon">🎮</div>
+                        <h3 id="selectedGameName">Selected Game</h3>
+                        <p>Both players need to be ready to start</p>
+                        <button id="readyBtn" class="ready-btn">I'm Ready! 🎯</button>
+                        <div class="auto-start-info" id="autoStartInfo" style="display:none;">
+                            <p>🎉 Both players ready! Game starting in <span id="countdown">3</span> seconds...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Enhanced Chat Panel with Emojis -->
+        <div id="chatPanel" class="chat-panel">
+            <div class="chat-header">
+                <h4>💬 Live Chat</h4>
+                <button id="closeChatBtn" class="close-btn">×</button>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="welcome-message">
+                    <p>🎮 Welcome to MK Games Chat! 🎮</p>
+                    <p>Use emojis to express yourself! 😄</p>
+                </div>
+            </div>
+            <div class="emoji-picker" id="emojiPicker">
+                <!-- Faces & Emotions -->
+                <button class="emoji-btn" data-emoji="😄">😄</button>
+                <button class="emoji-btn" data-emoji="😂">😂</button>
+                <button class="emoji-btn" data-emoji="🤣">🤣</button>
+                <button class="emoji-btn" data-emoji="😭">😭</button>
+                <button class="emoji-btn" data-emoji="😱">😱</button>
+                <button class="emoji-btn" data-emoji="🤯">🤯</button>
+                <button class="emoji-btn" data-emoji="😎">😎</button>
+                <button class="emoji-btn" data-emoji="🤪">🤪</button>
+                <button class="emoji-btn" data-emoji="😜">😜</button>
+                <button class="emoji-btn" data-emoji="🤓">🤓</button>
+                <button class="emoji-btn" data-emoji="😤">😤</button>
+                <button class="emoji-btn" data-emoji="🥳">🥳</button>
+                
+                <!-- Gaming & Fun -->
+                <button class="emoji-btn" data-emoji="🎮">🎮</button>
+                <button class="emoji-btn" data-emoji="🎯">🎯</button>
+                <button class="emoji-btn" data-emoji="🎉">🎉</button>
+                <button class="emoji-btn" data-emoji="🔥">🔥</button>
+                <button class="emoji-btn" data-emoji="⚡">⚡</button>
+                <button class="emoji-btn" data-emoji="💫">💫</button>
+                <button class="emoji-btn" data-emoji="✨">✨</button>
+                <button class="emoji-btn" data-emoji="🌟">🌟</button>
+                
+                <!-- Reactions -->
+                <button class="emoji-btn" data-emoji="👍">👍</button>
+                <button class="emoji-btn" data-emoji="👎">👎</button>
+                <button class="emoji-btn" data-emoji="👏">👏</button>
+                <button class="emoji-btn" data-emoji="🙌">🙌</button>
+                <button class="emoji-btn" data-emoji="💪">💪</button>
+                <button class="emoji-btn" data-emoji="🤝">🤝</button>
+                <button class="emoji-btn" data-emoji="🤞">🤞</button>
+                <button class="emoji-btn" data-emoji="✊">✊</button>
+                
+                <!-- Hearts & Love -->
+                <button class="emoji-btn" data-emoji="❤️">❤️</button>
+                <button class="emoji-btn" data-emoji="💛">💛</button>
+                <button class="emoji-btn" data-emoji="💚">💚</button>
+                <button class="emoji-btn" data-emoji="💙">💙</button>
+                <button class="emoji-btn" data-emoji="💜">💜</button>
+                <button class="emoji-btn" data-emoji="🧡">🧡</button>
+                
+                <!-- Fun Objects -->
+                <button class="emoji-btn" data-emoji="🎲">🎲</button>
+                <button class="emoji-btn" data-emoji="🏆">🏆</button>
+                <button class="emoji-btn" data-emoji="🥇">🥇</button>
+                <button class="emoji-btn" data-emoji="🎊">🎊</button>
+                <button class="emoji-btn" data-emoji="💎">💎</button>
+                <button class="emoji-btn" data-emoji="🚀">🚀</button>
+                <button class="emoji-btn" data-emoji="💥">💥</button>
+                <button class="emoji-btn" data-emoji="⭐">⭐</button>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="chatInput" placeholder="Type a message..." maxlength="100">
+                <button id="sendChatBtn" class="send-btn">Send</button>
+            </div>
+        </div>
+
+        <!-- Connection Status -->
+        <div id="connectionStatus" class="connection-status">
+            <span id="statusText">🔄 Connecting...</span>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
